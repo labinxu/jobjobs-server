@@ -1,10 +1,10 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/helpers";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Providers from "@/components/providers";
 import { Playfair_Display } from "next/font/google";
 import { auth } from "@/auth";
-import "./globals.css";
+import "../globals.css";
 import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
