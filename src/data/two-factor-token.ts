@@ -1,13 +1,13 @@
-import { db } from "@/lib/db";
-
+import prisma from "@/lib/API/Services/init/prisma";
 export const getTwoFactorTokenByToken = async (token: string) => {
   try {
-    const twoFactorToken = await db.twoFactorToken.findUnique({
+    const twoFactorToken = await prisma.twoFactorToken.findUnique({
       where: { token },
     });
 
     return twoFactorToken;
   } catch (error) {
+    console.log(error);
     return null;
   }
 };
@@ -20,6 +20,7 @@ export const getTwoFactorTokenByEmail = async (email: string) => {
 
     return twoFactorToken;
   } catch (error) {
+    console.log(error);
     return null;
   }
 };

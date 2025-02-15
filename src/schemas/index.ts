@@ -55,7 +55,7 @@ export const SettingsSchema = z
     {
       message: "New password is required!",
       path: ["newPassword"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -68,5 +68,20 @@ export const SettingsSchema = z
     {
       message: "Password is required!",
       path: ["password"],
-    }
+    },
   );
+export const CreateTaskSchema = z.object({
+  name: z
+    .string()
+    .min(2, { message: "Task name at least 2 characters required!" }),
+  platform: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: "You have to select at least one item.",
+  }),
+  status: z.string().default("pending"),
+  keywords: z
+    .string()
+    .min(2, { message: "Keywords minimum 2 characters required!" }),
+  syncStrategy: z.boolean().default(false),
+  syncData: z.string().default(""),
+  update_time: z.string(),
+});

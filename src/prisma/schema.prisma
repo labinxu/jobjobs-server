@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -7,6 +7,7 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
 enum UserRole {
   ADMIN
   USER
@@ -24,6 +25,13 @@ model User {
   isTwoFactorEnabled      Boolean                @default(false)
   twoFactorConfirmation   TwoFactorConfirmation?
   twoFactorConfirmationId String?                @db.ObjectId
+  tasks                   Task[]
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  createdAt DateTime
 }
 
 model Account {
@@ -81,22 +89,30 @@ model TwoFactorConfirmation {
   @@unique([userId])
 }
 
-// Define the Position model
-model Position {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  pageCode      String
-  shortPageCode String
-  jobRank       String
-  jobSource     String
-  jobId         String
-  jobTitle      String
-  jobSalary     String
-  jobArea       String
-  jobYear       String
-  jobDegree     String
-  companyId     String
-  jobTime       String
-  pageNum       String
+model Task {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String   @db.ObjectId
+  name         String
+  syncStrategy String
+  syncData     String
+  status       String
+  keywords     String
+  platform     String[]
+  User         User     @relation(fields: [userId], references: [id])
+  goods        Goods[]
+  update_time  DateTime @default(now())
+}
 
- @@map(name: "positions")
+model Goods {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  sku_name    String
+  sku_id      String
+  shop_name   String
+  final_price String
+  jd_price    String
+  detail      String
+  taskId      String   @db.ObjectId
+  source      String
+  update_time DateTime @default(now())
+  task        Task     @relation(fields: [taskId], references: [id])
 }

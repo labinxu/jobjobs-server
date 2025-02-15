@@ -1,3 +1,4 @@
+import RegisterForm from "@/components/auth/register-form";
 import {
   Card,
   CardContent,
@@ -7,8 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-
-import AuthForm from "../_PageSections/AuthForm";
 
 export default function Signup() {
   return (
@@ -21,7 +20,7 @@ export default function Signup() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AuthForm submit_text="Signup with Email" />
+          <RegisterForm />
         </CardContent>
         <CardFooter>
           <div className="flex flex-col">

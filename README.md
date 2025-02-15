@@ -13,11 +13,23 @@ pnpm dev
 # or
 bun dev
 ```
+## create the secret enrionment variable
 run : npx auth secret
-create the secret enrionment variable
+## fixed Error Shadcn `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users
+ 
+     if (isMobile) {
++      console.log("Mobile sidebar");
+       return (
+         <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
++          <SheetTitle className="hidden" />
++          <SheetDescription className="hidden" />
+           <SheetContent
+           ##
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## https://next-intl.dev/docs/getting-started/app-router/without-i18n-routing
+The locale that was provided in i18n/request.ts is available via getLocale and can be used to configure the document language. Additionally, we can use this place to pass configuration from i18n/request.ts to Client Components via NextIntlClientProvider.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 

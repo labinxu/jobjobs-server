@@ -5,7 +5,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 import { PanelLeft } from "lucide-react";
 
-import { useIsMobile } from "@/components/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +39,7 @@ type SidebarContext = {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+  ref: React.ForwardedRef<HTMLDivElement>;
 };
 
 const SidebarContext = React.createContext<SidebarContext | null>(null);
@@ -130,6 +131,7 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        ref,
       }),
       [
         state,
@@ -139,6 +141,7 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        ref,
       ],
     );
 
@@ -206,7 +209,6 @@ const Sidebar = React.forwardRef<
     }
 
     if (isMobile) {
-      console.log("Mobile sidebar");
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
           <SheetTitle className="hidden" />

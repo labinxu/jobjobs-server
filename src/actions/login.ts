@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { AuthError } from "next-auth";
 import bcrypt from "bcryptjs";
-
+import prisma from "@/lib/API/Services/init/prisma";
 import { signIn } from "@/auth";
 import { LoginSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/user";
@@ -14,15 +14,13 @@ import {
   generateTwoFactorToken,
 } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { db } from "@/lib/db";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
-
+//import { createSession } from "@/lib/session";
 export const login = async (
   values: z.infer<typeof LoginSchema>,
-  callbackUrl?: string | null
+  callbackUrl?: string | null,
 ) => {
   const validatedFields = LoginSchema.safeParse(values);
-
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
   }
@@ -37,12 +35,12 @@ export const login = async (
 
   if (!existingUser.emailVerified) {
     const verificationToken = await generateVerificationToken(
-      existingUser.email
+      existingUser.email,
     );
 
     await sendVerificationEmail(
       verificationToken.email,
-      verificationToken.token
+      verificationToken.token,
     );
 
     return { success: "Confirmation email Sent!" };
@@ -72,21 +70,21 @@ export const login = async (
         return { error: "Code expired!" };
       }
 
-      await db.twoFactorToken.delete({
+      await prisma.twoFactorToken.delete({
         where: { id: twoFactorToken.id },
       });
 
       const existingConfirmation = await getTwoFactorConfirmationByUserId(
-        existingUser.id
+        existingUser.id,
       );
 
       if (existingConfirmation) {
-        await db.twoFactorConfirmation.delete({
+        await prisma.twoFactorConfirmation.delete({
           where: { id: existingConfirmation.id },
         });
       }
 
-      await db.twoFactorConfirmation.create({
+      await prisma.twoFactorConfirmation.create({
         data: {
           userId: existingUser.id,
         },
@@ -105,8 +103,12 @@ export const login = async (
       password,
       redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
-
-    // return { success: "Login Sucess!" };
+    // await createSession(existingUser.id);
+    // const session = await prisma.session.create({
+    //   data: { userId: existingUser.id, createdAt: new Date() },
+    // });
+    // console.log(`create session id:${session.id}`);
+    return { success: "Login Sucess!" }; //, sessionId: session.id };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

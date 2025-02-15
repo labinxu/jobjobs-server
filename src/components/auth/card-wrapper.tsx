@@ -5,7 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardFooter,
-} from "@/components/ui/jcard";
+} from "@/components/ui/card";
 import Header from "@/components/auth/header";
 import Social from "@/components/auth/social";
 import BackButton from "@/components/auth/back-button";

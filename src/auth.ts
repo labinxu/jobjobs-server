@@ -4,9 +4,21 @@ import { UserRole } from "@prisma/client";
 
 import { getUserById } from "@/data/user";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
-import { db } from "@/lib/db";
 import authConfig from "@/auth.config";
 import { getAccountByUserId } from "./data/account";
+import prisma from "@/lib/API/Services/init/prisma";
+
+export type ExtendedUser = DefaultSession["user"] & {
+  role: UserRole;
+  isTwoFactorEnabled: boolean;
+  isOAuth: boolean;
+};
+
+declare module "next-auth" {
+  interface Session {
+    user: ExtendedUser;
+  }
+}
 
 export const {
   handlers: { GET, POST },
@@ -20,7 +32,7 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await db.user.update({
+      await prisma.user.update({
         where: { id: user.id },
         data: { emailVerified: new Date() },
       });
@@ -32,20 +44,19 @@ export const {
       // Allow OAuth without email verification
       if (account?.provider !== "credentials") return true;
 
-      const existingUser = await getUserById(user.id);
-
+      const existingUser = await getUserById(user?.id);
       // Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
 
       if (existingUser.isTwoFactorEnabled) {
         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-          existingUser.id
+          existingUser.id,
         );
 
         if (!twoFactorConfirmation) return false;
 
         // Delete two factor confirmation for next sign in
-        await db.twoFactorConfirmation.delete({
+        await prisma.twoFactorConfirmation.delete({
           where: { id: twoFactorConfirmation.id },
         });
       }
@@ -88,7 +99,8 @@ export const {
       return token;
     },
   },
-  adapter: PrismaAdapter(db),
+  secret: process.env.NEXTAUTH_SECRET,
+  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   ...authConfig,
 });

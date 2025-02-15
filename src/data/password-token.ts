@@ -1,25 +1,26 @@
-import { db } from "@/lib/db";
-
+import prisma from "@/lib/API/Services/init/prisma";
 export const getPasswordResetTokenByToken = async (token: string) => {
   try {
-    const passwordResetToken = await db.passwordResetToken.findUnique({
+    const passwordResetToken = await prisma.passwordResetToken.findUnique({
       where: { token },
     });
 
     return passwordResetToken;
   } catch (error) {
+    console.log(error);
     return null;
   }
 };
 
 export const getPasswordResetTokenByEmail = async (email: string) => {
   try {
-    const passwordResetToken = await db.passwordResetToken.findFirst({
+    const passwordResetToken = await prisma.passwordResetToken.findFirst({
       where: { email },
     });
 
     return passwordResetToken;
   } catch (error) {
+    console.log(error);
     return null;
   }
 };

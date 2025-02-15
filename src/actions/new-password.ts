@@ -6,11 +6,11 @@ import bcrypt from "bcryptjs";
 import { getPasswordResetTokenByToken } from "@/data/password-token";
 import { getUserByEmail } from "@/data/user";
 import { NewPasswordSchema } from "@/schemas";
-import { db } from "@/lib/db";
+import prisma from "@/lib/API/Services/init/prisma";
 
 export const newPassword = async (
   values: z.infer<typeof NewPasswordSchema>,
-  token?: string | null
+  token?: string | null,
 ) => {
   if (!token) {
     return { error: "Missing token!" };
@@ -44,12 +44,12 @@ export const newPassword = async (
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await db.user.update({
+  await prisma.user.update({
     where: { id: existingUser.id },
     data: { password: hashedPassword },
   });
 
-  await db.passwordResetToken.delete({
+  await prisma.passwordResetToken.delete({
     where: { id: existingToken.id },
   });
 

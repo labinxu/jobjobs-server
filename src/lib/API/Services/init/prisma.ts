@@ -1,7 +1,7 @@
-import { neonConfig, Pool, PoolConfig } from '@neondatabase/serverless';
-import { PrismaNeon } from '@prisma/adapter-neon';
-import { PrismaClient, Prisma } from '@prisma/client';
-import ws from 'ws';
+import { neonConfig, Pool, PoolConfig } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaClient, Prisma } from "@prisma/client";
+import ws from "ws";
 
 //www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices
 declare global {
@@ -10,13 +10,14 @@ declare global {
 
 let prisma: PrismaClient;
 
-if (process.env.NODE_ENV === 'development') {
-  console.log('development');
-  prisma = new PrismaClient();
+if (process.env.NODE_ENV === "development") {
+  prisma = new PrismaClient({
+    log: ["query", "info", "warn", "error"], // Enable query logging
+  });
   global.prisma = prisma;
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   // setup
   neonConfig.webSocketConstructor = ws;
   const connectionString = process.env.DATABASE_URL;
@@ -26,19 +27,17 @@ if (process.env.NODE_ENV === 'production') {
   const pool = new Pool(poolConfig);
   const adapter = new PrismaNeon(pool);
   prisma = new PrismaClient({ adapter });
-}
-if (process.env.NODE_ENV === 'test') {
+} else {
   const url = process.env.DATABASE_URL_TEST;
 
   prisma = new PrismaClient({
     datasources: {
       db: {
-        url
-      }
-    }
+        url,
+      },
+    },
   });
 }
-
 export { Prisma };
 
 export default prisma;

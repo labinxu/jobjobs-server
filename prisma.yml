@@ -1,0 +1,2 @@
+endpoint:DATABASE_URL
+datamodel:src/prisma/schema.prisma

@@ -1,0 +1,7 @@
+{
+  "HomePage": {
+    "title": "你好",
+    "TaskManage": "任务管理",
+    "TaskDescription": "任务的新建,删除,查看,启动"
+  }
+}

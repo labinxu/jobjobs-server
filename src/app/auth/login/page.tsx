@@ -1,9 +1,12 @@
 import LoginForm from "@/components/auth/login-form";
+import { Card } from "@/components/ui/card";
 
 export default async function Login() {
   return (
-    <div className="md:w-96">
-      <LoginForm />
-    </div>
+    <section>
+      <Card>
+        <LoginForm />
+      </Card>
+    </section>
   );
 }
